@@ -23,8 +23,18 @@ let lockBoard = false;
 */
 function initGame() {
     // Write your code here
-
-    document.getElementById('restart-btn').addEventListener('click', initGame);
+    resetBoard();
+    const gB = document.getElementById('game-board');
+    gB.innerHTML = ''; 
+    cards = [];
+    for (let symbol of symbols) {
+        cards.push(symbol);
+        cards.push(symbol);
+    }
+    shuffleArray(cards);
+    for (let symbol of cards) {
+        createCard(symbol);
+    }
 }
 
 /*
@@ -34,7 +44,11 @@ function initGame() {
     Also make sure to add the event listener with the 'flipCard' function
 */
 function createCard(symbol) {
-    // Write your code here
+    const card = document.createElement('div');
+    card.classList.add('card');
+    card.dataset.symbol = symbol;
+    card.addEventListener('click', () => flipCard(card));
+    document.getElementById('game-board').appendChild(card);
 }
 
 /*
@@ -48,7 +62,16 @@ function createCard(symbol) {
 function flipCard(card) {
     // If the board is supposed to be locked or you picked the same card you already picked
     if (lockBoard || card === firstCard) return;
-    // Write your code here
+    card.classList.add('flipped');
+    card.textContent = card.dataset.symbol;
+    
+    if (firstCard == null) {
+        firstCard = card;
+    } 
+    else {
+        secondCard = card;
+        checkForMatch();
+    }
 }
 
 /* 
@@ -57,7 +80,12 @@ function flipCard(card) {
     Otherwise, you should unflip the card and continue playing normally.
 */
 function checkForMatch() {
-    // Write your code here
+    if (firstCard.dataset.symbol === secondCard.dataset.symbol) {
+        disableCards();
+    } 
+    else {
+        unflipCards();
+    }
 }
 
 /* 
@@ -67,6 +95,9 @@ function checkForMatch() {
 */
 function disableCards() {
     // Write your code here
+    firstCard.classList.add('matched');
+    secondCard.classList.add('matched');
+    resetBoard();
 }
  
 /* ---------------------  Everything under has already been done for you -------------------------- */
