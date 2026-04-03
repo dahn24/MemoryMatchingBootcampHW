@@ -23,18 +23,19 @@ let lockBoard = false;
 */
 function initGame() {
     // Write your code here
-    resetBoard();
-    const gB = document.getElementById('game-board');
-    gB.innerHTML = ''; 
-    cards = [];
-    for (let symbol of symbols) {
-        cards.push(symbol);
-        cards.push(symbol);
-    }
+
+    //shuffle cards to make it random.
+    //use createcard function to initialize a single card element
+    let cards = symbols.concat(symbols)
     shuffleArray(cards);
+    let gB = document.getElementById('game-board');
+    gB.innerHTML = '';
+
     for (let symbol of cards) {
-        createCard(symbol);
+        let card = createCard(symbol);
+        gB.appendChild(card);
     }
+    document.getElementById('restart-btn').addEventListener('click', initGame);
 }
 
 /*
@@ -44,11 +45,11 @@ function initGame() {
     Also make sure to add the event listener with the 'flipCard' function
 */
 function createCard(symbol) {
-    const card = document.createElement('div');
+    let card = document.createElement('div');
     card.classList.add('card');
     card.dataset.symbol = symbol;
-    card.addEventListener('click', () => flipCard(card));
-    document.getElementById('game-board').appendChild(card);
+    card.addEventListener('click', () => flipCard(card))
+    return card
 }
 
 /*
@@ -62,14 +63,16 @@ function createCard(symbol) {
 function flipCard(card) {
     // If the board is supposed to be locked or you picked the same card you already picked
     if (lockBoard || card === firstCard) return;
-    card.classList.add('flipped');
-    card.textContent = card.dataset.symbol;
     
-    if (firstCard == null) {
+    if (firstCard === null) {
         firstCard = card;
+        firstCard.innerText = card.dataset.symbol
+        firstCard.classList.add('flipped');
     } 
-    else {
+    else if (secondCard === null) {
         secondCard = card;
+        secondCard.innerText = card.dataset.symbol
+        secondCard.classList.add('flipped');
         checkForMatch();
     }
 }
